@@ -1,0 +1,45 @@
+stats:
+LOAD [First Name]&' '&[Last Name] as Name
+	,G
+	,A
+	,GP
+	,Pos
+	,[End Team]
+    ,Nat
+	,[B/60]
+	,[HA/60]
+	,TOI
+	,Teams
+FROM
+[NHL 2015-16.xls]
+(biff, embedded labels, table is [Main Page$])
+Where GP>=10;
+
+inner join (stats)
+LOAD [First Name]&' '&[Last Name] as Name
+	,G as GPrev
+FROM
+[NHL 2014-15.xls]
+(biff, embedded labels, table is [Main Page$]);
+
+concatenate(stats)
+LOAD FirstName &' '& LastName as Name
+	,EndTeam as [End Team]
+    ,Country as Nat
+    ,GoalsPredictedLassoModel as GLasso
+FROM [lasso.csv]
+(txt, codepage is 1252, embedded labels, delimiter is ',', msq);
+
+concatenate(stats)
+LOAD [First Name]&' '&[Last Name] as Go.Name
+	,'G' as Pos
+    ,[End Tm] as [End Team]
+	,[SV%] as [Go.SV%]
+	,[HighS] as [Go.HighS]
+	,Nat
+	,GP
+	,W as Go.W
+FROM
+[NHL Goalies 2015-16.xls]
+(biff, embedded labels, table is Goalies$)
+Where GP>=10;
